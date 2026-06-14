@@ -1,222 +1,112 @@
 # 🚌 Smart Bus Pass Management System
 
-A production-ready, enterprise-grade bus pass management system built with modern technologies and clean architecture principles.
+[![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.x-06B6D4?style=flat-square&logo=tailwindcss)](https://tailwindcss.com)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Docker Ready](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker)](https://www.docker.com/)
 
-## 🏗️ Architecture Overview
+A production-ready, enterprise-grade bus pass management system built with modern technologies and clean architecture principles. Featuring ML-powered fraud detection, QR-based validation, and real-time analytics.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              PRESENTATION LAYER                              │
-│  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐  │
-│  │   React Frontend    │  │    Mobile App       │  │   Admin Dashboard   │  │
-│  │   (Student Portal)  │  │    (Future)         │  │   (React)           │  │
-│  └─────────────────────┘  └─────────────────────┘  └─────────────────────┘  │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              API GATEWAY LAYER                               │
-│  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │                         FastAPI Application                          │    │
-│  │  • Rate Limiting (Redis)    • JWT Authentication                    │    │
-│  │  • Request Validation       • CORS Handling                         │    │
-│  │  • API Versioning           • Error Handling                        │    │
-│  └─────────────────────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              APPLICATION LAYER                               │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │ Auth Service  │  │ Pass Service  │  │ QR Service    │  │ Fraud       │   │
-│  │               │  │               │  │               │  │ Detection   │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘  └─────────────┘   │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │ Route Service │  │Payment Service│  │Analytics Svc  │  │ Notification│   │
-│  │               │  │  (Stripe)     │  │               │  │ Service     │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘  └─────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              DOMAIN LAYER                                    │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │ User Entity   │  │ Pass Entity   │  │ Route Entity  │  │ Scan Entity │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘  └─────────────┘   │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │ Payment       │  │ Document      │  │ Fraud Alert   │  │ Analytics   │   │
-│  │ Entity        │  │ Entity        │  │ Entity        │  │ Entity      │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘  └─────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           INFRASTRUCTURE LAYER                               │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │  PostgreSQL   │  │    Redis      │  │   S3/Minio    │  │   Stripe    │   │
-│  │  (Primary DB) │  │   (Cache)     │  │  (Documents)  │  │  (Payments) │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘  └─────────────┘   │
-│  ┌───────────────┐  ┌───────────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │ Google Maps   │  │   Celery      │  │  CloudWatch   │  │   SendGrid  │   │
-│  │     API       │  │   (Tasks)     │  │   (Logging)   │  │   (Email)   │   │
-│  └───────────────┘  └───────────────┘  └───────────────┘  └─────────────┘   │
-└─────────────────────────────────────────────────────────────────────────────┘
-```
+## ✨ Features
 
-## 📁 Project Structure
+### 🔐 Authentication & Security
+* **JWT Authentication** - Secure token-based auth with refresh tokens
+* **Rate Limiting** - Redis-powered API rate limiting
+* **Role-Based Access** - Admin, Student, and Operator roles
+* **Fraud Detection** - ML-powered anomaly detection for pass usage
 
-```
-smart-bus-pass/
-├── backend/
-│   ├── app/
-│   │   ├── __init__.py
-│   │   ├── main.py                    # FastAPI application entry point
-│   │   ├── config.py                  # Environment configuration
-│   │   │
-│   │   ├── api/                       # API Layer (Routers)
-│   │   │   ├── __init__.py
-│   │   │   ├── deps.py                # Dependency injection
-│   │   │   ├── v1/
-│   │   │   │   ├── __init__.py
-│   │   │   │   ├── router.py          # API router aggregator
-│   │   │   │   ├── endpoints/
-│   │   │   │   │   ├── auth.py        # Authentication endpoints
-│   │   │   │   │   ├── users.py       # User management
-│   │   │   │   │   ├── passes.py      # Bus pass operations
-│   │   │   │   │   ├── routes.py      # Route management
-│   │   │   │   │   ├── payments.py    # Payment processing
-│   │   │   │   │   ├── qr.py          # QR code operations
-│   │   │   │   │   ├── admin.py       # Admin operations
-│   │   │   │   │   └── analytics.py   # Analytics endpoints
-│   │   │
-│   │   ├── core/                      # Core utilities
-│   │   │   ├── __init__.py
-│   │   │   ├── security.py            # JWT, password hashing
-│   │   │   ├── exceptions.py          # Custom exceptions
-│   │   │   ├── middleware.py          # Custom middleware
-│   │   │   └── rate_limiter.py        # Rate limiting logic
-│   │   │
-│   │   ├── services/                  # Business Logic Layer
-│   │   │   ├── __init__.py
-│   │   │   ├── auth_service.py
-│   │   │   ├── user_service.py
-│   │   │   ├── pass_service.py
-│   │   │   ├── route_service.py
-│   │   │   ├── payment_service.py
-│   │   │   ├── qr_service.py
-│   │   │   ├── fraud_detection_service.py
-│   │   │   ├── analytics_service.py
-│   │   │   └── notification_service.py
-│   │   │
-│   │   ├── repositories/              # Data Access Layer
-│   │   │   ├── __init__.py
-│   │   │   ├── base.py                # Base repository
-│   │   │   ├── user_repository.py
-│   │   │   ├── pass_repository.py
-│   │   │   ├── route_repository.py
-│   │   │   ├── scan_repository.py
-│   │   │   └── payment_repository.py
-│   │   │
-│   │   ├── models/                    # SQLAlchemy Models
-│   │   │   ├── __init__.py
-│   │   │   ├── base.py                # Base model class
-│   │   │   ├── user.py
-│   │   │   ├── bus_pass.py
-│   │   │   ├── route.py
-│   │   │   ├── scan_log.py
-│   │   │   ├── payment.py
-│   │   │   ├── document.py
-│   │   │   └── fraud_alert.py
-│   │   │
-│   │   ├── schemas/                   # Pydantic Schemas
-│   │   │   ├── __init__.py
-│   │   │   ├── user.py
-│   │   │   ├── bus_pass.py
-│   │   │   ├── route.py
-│   │   │   ├── payment.py
-│   │   │   ├── qr.py
-│   │   │   └── analytics.py
-│   │   │
-│   │   ├── ml/                        # ML Models for Fraud Detection
-│   │   │   ├── __init__.py
-│   │   │   ├── fraud_model.py
-│   │   │   ├── feature_engineering.py
-│   │   │   └── model_training.py
-│   │   │
-│   │   └── db/                        # Database
-│   │       ├── __init__.py
-│   │       ├── session.py             # Database session
-│   │       ├── redis.py               # Redis connection
-│   │       └── migrations/            # Alembic migrations
-│   │
-│   ├── tests/                         # Test suite
-│   │   ├── __init__.py
-│   │   ├── conftest.py
-│   │   ├── test_auth.py
-│   │   ├── test_passes.py
-│   │   └── test_fraud.py
-│   │
-│   ├── alembic.ini
-│   ├── requirements.txt
-│   ├── Dockerfile
-│   └── .env.example
-│
-├── frontend/                          # React Frontend
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── App.tsx
-│   ├── package.json
-│   └── Dockerfile
-│
-├── docker-compose.yml
-├── docker-compose.prod.yml
-├── nginx/
-│   └── nginx.conf
-└── README.md
-```
+### 👨‍💼 Admin Portal
+* 📊 **Dashboard** - Real-time analytics with interactive charts
+* 👥 **User Management** - Full CRUD for users and operators
+* 📄 **Pass Management** - Approve, reject, or revoke bus passes
+* 🗺️ **Route Management** - Create and manage bus routes and stops
+* 📈 **Reports** - Revenue trends and usage insights
+* ⚙️ **System Config** - Pricing, schedules, and global settings
 
-## 🗄️ Database Schema
+### 👤 Student Portal
+* 💳 **Apply Online** - Streamlined pass application with document upload
+* 📱 **Digital Pass** - QR code-based digital pass for instant validation
+* 💰 **Easy Payments** - Integrated Stripe payment gateway
+* 🔔 **Smart Alerts** - Notifications for expiry and status changes
+* 📝 **Support** - Integrated ticketing system for issues
 
-See `docs/DATABASE_SCHEMA.md` for complete ERD and schema definitions.
+## 🛠️ Tech Stack
 
-## 🔐 Authentication Flow
+| Technology | Purpose |
+| --- | --- |
+| **React 19** | UI Framework |
+| **FastAPI** | High-performance Python Backend |
+| **PostgreSQL** | Primary Relational Database |
+| **Redis** | Caching & Rate Limiting |
+| **Tailwind CSS 4** | Styling & UI |
+| **Stripe** | Payment Processing |
+| **Docker** | Containerization |
+| **ML/Scikit-learn** | Fraud Detection Models |
 
-See `docs/AUTH_FLOW.md` for JWT authentication implementation details.
+## 🏗️ Architecture
+
+The system follows **Clean Architecture** principles with a layered approach:
+* **Presentation Layer**: React frontend & Admin dashboard
+* **API Gateway**: FastAPI with JWT & Rate Limiting
+* **Application Layer**: Business logic & Services
+* **Domain Layer**: Core entities & ML models
+* **Infrastructure Layer**: PostgreSQL, Redis, S3, & Stripe
 
 ## 🚀 Quick Start
 
+### Prerequisites
+* Docker & Docker Compose
+* Node.js 18+ (for local dev)
+* Python 3.11+ (for local dev)
+
+### Setup
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/smart-bus-pass.git
-cd smart-bus-pass
+git clone https://github.com/mainlypm0305/smart-bus-pass-system.git
 
-# Start with Docker Compose
+# Navigate to project directory
+cd smart-bus-pass-system
+
+# Start all services with Docker
 docker-compose up -d
-
-# Access the application
-# Frontend: http://localhost:3000
-# API: http://localhost:8000
-# API Docs: http://localhost:8000/docs
 ```
 
-## 📚 Documentation
+Access the app:
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
 
-- [API Documentation](docs/API.md)
-- [Database Schema](docs/DATABASE_SCHEMA.md)
-- [Authentication Flow](docs/AUTH_FLOW.md)
-- [Deployment Guide](docs/DEPLOYMENT.md)
-- [Security Best Practices](docs/SECURITY.md)
-- [Development Roadmap](docs/ROADMAP.md)
+## 📁 Project Structure
+```text
+src/
+├── backend/            # FastAPI Backend
+│   ├── app/
+│   │   ├── api/        # Endpoints
+│   │   ├── services/   # Business Logic
+│   │   ├── models/     # SQL Models
+│   │   └── ml/         # Fraud Detection
+├── frontend/           # React Frontend
+│   ├── src/
+│   │   ├── components/ # UI Components
+│   │   └── pages/      # View Pages
+└── docker-compose.yml  # Orchestration
+```
 
-## 🏆 Resume-Worthy Highlights
-
+## 🏆 Resume Highlights
 1. **Clean Architecture** - Layered design with separation of concerns
 2. **ML Integration** - Rule-based + ML fraud detection
 3. **Real-time Processing** - Redis caching and WebSocket notifications
 4. **Payment Integration** - Production-ready Stripe implementation
-5. **Security First** - JWT, rate limiting, input validation
-6. **Containerized** - Docker + Docker Compose for easy deployment
-7. **Comprehensive Testing** - Unit, integration, and E2E tests
-8. **CI/CD Ready** - GitHub Actions workflows included
+5. **Security First** - JWT, rate limiting, and input validation
+
+## 🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+**mainlypm0305**
+* GitHub: [@mainlypm0305](https://github.com/mainlypm0305)
