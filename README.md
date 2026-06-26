@@ -73,10 +73,6 @@ cd smart-bus-pass-system
 docker-compose up -d
 ```
 
-Access the app:
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs
 
 ## 📁 Project Structure
 ```text
